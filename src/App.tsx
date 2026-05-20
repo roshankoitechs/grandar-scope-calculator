@@ -1281,14 +1281,6 @@ function App() {
         </section>
 
         <aside className="summary-panel" aria-label="Підсумок оцінки">
-          <div className="summary-card total-card">
-            <p className="section-label">{currentScopeLabel}</p>
-            <strong>{formatHours(viewTotals.min, viewTotals.max)}</strong>
-            <b>{formatBudget(viewTotals.min, viewTotals.max)}</b>
-            <span>{formatMonthRange(viewTotals.min, viewTotals.max)} з 2 сеньйор full-stack розробниками</span>
-            <span>Ставка: ${hourlyRateUsd}/год</span>
-          </div>
-
           <div className="summary-card">
             <div className="summary-heading">
               <h3>Розподіл</h3>
@@ -1341,6 +1333,14 @@ function App() {
             <p>2 сеньйор full-stack розробники ≈ 320 год/місяць.</p>
             <p>Вартість рахується за ставкою ${hourlyRateUsd}/год.</p>
             <p>Календар може змінюватися через приймальне тестування, доступи до інтеграцій і зміни обсягу.</p>
+          </div>
+
+          <div className="summary-card total-card">
+            <p className="section-label">{currentScopeLabel}</p>
+            <strong>{formatHours(viewTotals.min, viewTotals.max)}</strong>
+            <b>{formatBudget(viewTotals.min, viewTotals.max)}</b>
+            <span>{formatMonthRange(viewTotals.min, viewTotals.max)} з 2 сеньйор full-stack розробниками</span>
+            <span>Ставка: ${hourlyRateUsd}/год</span>
           </div>
         </aside>
       </div>
