@@ -617,9 +617,32 @@ function escapeHtml(value: string) {
     .replace(/'/g, '&#039;')
 }
 
+function calculateScopeTotals(blocks: WorkBlock[], selected: Record<string, boolean>) {
+  const picked = blocks.filter((block) => selected[block.id])
+  const removed = blocks.filter((block) => !selected[block.id])
+  const min = picked.reduce((sum, block) => sum + block.min, 0)
+  const max = picked.reduce((sum, block) => sum + block.max, 0)
+  const breakdown = picked.reduce(
+    (acc, block) => {
+      acc[block.category].min += block.min
+      acc[block.category].max += block.max
+      return acc
+    },
+    {
+      Architecture: { min: 0, max: 0 },
+      Feature: { min: 0, max: 0 },
+      QA: { min: 0, max: 0 },
+      Integration: { min: 0, max: 0 },
+      Mobile: { min: 0, max: 0 },
+    } satisfies Record<Category, { min: number; max: number }>,
+  )
+
+  return { picked, removed, min, max, breakdown }
+}
+
 function App() {
   const [selected, setSelected] = useState<Record<string, boolean>>(initialSelected)
-  const [activeMilestone, setActiveMilestone] = useState('all')
+  const [activeMilestone, setActiveMilestone] = useState('m1')
   const [showOnlyRemovable, setShowOnlyRemovable] = useState(false)
 
   const visibleMilestones = useMemo(() => {
@@ -627,32 +650,23 @@ function App() {
     return milestones.filter((milestone) => milestone.id === activeMilestone)
   }, [activeMilestone])
 
-  const totals = useMemo(() => {
-    const picked = allBlocks.filter((block) => selected[block.id])
-    const removed = allBlocks.filter((block) => !selected[block.id])
-    const min = picked.reduce((sum, block) => sum + block.min, 0)
-    const max = picked.reduce((sum, block) => sum + block.max, 0)
-    const breakdown = picked.reduce(
-      (acc, block) => {
-        acc[block.category].min += block.min
-        acc[block.category].max += block.max
-        return acc
-      },
-      {
-        Architecture: { min: 0, max: 0 },
-        Feature: { min: 0, max: 0 },
-        QA: { min: 0, max: 0 },
-        Integration: { min: 0, max: 0 },
-        Mobile: { min: 0, max: 0 },
-      } satisfies Record<Category, { min: number; max: number }>,
-    )
+  const visibleBlocks = useMemo(
+    () => visibleMilestones.flatMap((milestone) => milestone.blocks),
+    [visibleMilestones],
+  )
 
-    return { picked, removed, min, max, breakdown }
-  }, [selected])
+  const viewTotals = useMemo(
+    () => calculateScopeTotals(visibleBlocks, selected),
+    [selected, visibleBlocks],
+  )
+  const isFullMvpView = activeMilestone === 'all'
+  const currentScopeLabel = isFullMvpView
+    ? 'Повний MVP'
+    : visibleMilestones[0]?.title.replace('Майлстоун ', 'M') ?? 'Обраний майлстоун'
 
-  const removedWarnings = totals.removed.filter((block) => block.consequence)
+  const removedWarnings = viewTotals.removed.filter((block) => block.consequence)
   const maxCategory = Math.max(
-    ...Object.values(totals.breakdown).map((item) => item.max),
+    ...Object.values(viewTotals.breakdown).map((item) => item.max),
     1,
   )
 
@@ -676,12 +690,13 @@ function App() {
   async function copySummary() {
     const text = [
       'Grandar MVP калькулятор обсягу',
-      `Обрана оцінка: ${formatHours(totals.min, totals.max)}`,
-      `Орієнтовний бюджет: ${formatBudget(totals.min, totals.max)} за ставкою $${hourlyRateUsd}/год`,
-      `Календар з 2 сеньйор full-stack розробниками: ${formatMonthRange(totals.min, totals.max)}`,
+      `Поточний scope: ${currentScopeLabel}`,
+      `Обрана оцінка: ${formatHours(viewTotals.min, viewTotals.max)}`,
+      `Орієнтовний бюджет: ${formatBudget(viewTotals.min, viewTotals.max)} за ставкою $${hourlyRateUsd}/год`,
+      `Календар з 2 сеньйор full-stack розробниками: ${formatMonthRange(viewTotals.min, viewTotals.max)}`,
       '',
       'Обраний обсяг:',
-      ...totals.picked.map(
+      ...viewTotals.picked.map(
         (block) => `- ${block.title}: ${formatHours(block.min, block.max)} | ${formatBudget(block.min, block.max)}`,
       ),
     ].join('\n')
@@ -701,7 +716,7 @@ function App() {
 
     const categoryRows = (Object.keys(categoryLabels) as Category[])
       .map((category) => {
-        const item = totals.breakdown[category]
+        const item = viewTotals.breakdown[category]
         const width = Math.max(4, (item.max / maxCategory) * 100)
         return `
           <div class="pdf-breakdown-row">
@@ -716,7 +731,7 @@ function App() {
       })
       .join('')
 
-    const selectedMilestones = milestones
+    const selectedMilestones = visibleMilestones
       .map((milestone) => {
         const pickedBlocks = milestone.blocks.filter((block) => selected[block.id])
         if (pickedBlocks.length === 0) return ''
@@ -992,22 +1007,22 @@ function App() {
         <header class="pdf-header">
           <div class="pdf-logo">G</div>
           <div>
-            <h1>Grandar MVP — обраний обсяг</h1>
+            <h1>Grandar MVP — ${escapeHtml(currentScopeLabel)}</h1>
             <p>Згенеровано ${escapeHtml(new Date().toLocaleDateString('uk-UA'))}</p>
           </div>
         </header>
 
         <section class="pdf-hero">
           <div>
-            <strong>${escapeHtml(formatHours(totals.min, totals.max))}</strong>
+            <strong>${escapeHtml(formatHours(viewTotals.min, viewTotals.max))}</strong>
             <span>Обрана оцінка MVP</span>
           </div>
           <div>
-            <strong>${escapeHtml(formatMonthRange(totals.min, totals.max))}</strong>
+            <strong>${escapeHtml(formatMonthRange(viewTotals.min, viewTotals.max))}</strong>
             <span>Календар з 2 сеньйор full-stack розробниками</span>
           </div>
           <div>
-            <strong>${escapeHtml(formatBudget(totals.min, totals.max))}</strong>
+            <strong>${escapeHtml(formatBudget(viewTotals.min, viewTotals.max))}</strong>
             <span>Орієнтовний бюджет за ставкою $${hourlyRateUsd}/год</span>
           </div>
         </section>
@@ -1015,11 +1030,11 @@ function App() {
         <div class="pdf-summary-grid">
           <div class="pdf-stat">
             <span>Обрані блоки</span>
-            <strong>${totals.picked.length}/${allBlocks.length}</strong>
+            <strong>${viewTotals.picked.length}/${visibleBlocks.length}</strong>
           </div>
           <div class="pdf-stat">
             <span>Прибрані блоки</span>
-            <strong>${totals.removed.length}</strong>
+            <strong>${viewTotals.removed.length}</strong>
           </div>
           <div class="pdf-stat">
             <span>Ризики урізання</span>
@@ -1144,32 +1159,25 @@ function App() {
         </div>
         <div className="hero-stats" aria-label="Поточна оцінка">
           <div>
-            <span>Загальна оцінка</span>
-            <strong>{formatHours(totals.min, totals.max)}</strong>
+            <span>{isFullMvpView ? 'Загальна оцінка' : 'Оцінка майлстоуну'}</span>
+            <strong>{formatHours(viewTotals.min, viewTotals.max)}</strong>
           </div>
           <div>
             <span>2 senior розробники</span>
-            <strong>{formatMonthRange(totals.min, totals.max)}</strong>
+            <strong>{formatMonthRange(viewTotals.min, viewTotals.max)}</strong>
           </div>
           <div>
             <span>Бюджет</span>
-            <strong>{formatBudget(totals.min, totals.max)}</strong>
+            <strong>{formatBudget(viewTotals.min, viewTotals.max)}</strong>
           </div>
           <div>
             <span>Обрані блоки</span>
-            <strong>{totals.picked.length}/{allBlocks.length}</strong>
+            <strong>{viewTotals.picked.length}/{visibleBlocks.length}</strong>
           </div>
         </div>
       </section>
 
       <nav className="milestone-nav" aria-label="Фільтри майлстоунів">
-        <button
-          className={activeMilestone === 'all' ? 'active' : ''}
-          type="button"
-          onClick={() => setActiveMilestone('all')}
-        >
-          Усі майлстоуни
-        </button>
         {milestones.map((milestone, index) => (
           <button
             className={activeMilestone === milestone.id ? 'active' : ''}
@@ -1180,6 +1188,13 @@ function App() {
             M{index + 1}
           </button>
         ))}
+        <button
+          className={activeMilestone === 'all' ? 'active' : ''}
+          type="button"
+          onClick={() => setActiveMilestone('all')}
+        >
+          Total MVP
+        </button>
       </nav>
 
       <div className="workspace">
@@ -1267,10 +1282,10 @@ function App() {
 
         <aside className="summary-panel" aria-label="Підсумок оцінки">
           <div className="summary-card total-card">
-            <p className="section-label">Обрана оцінка</p>
-            <strong>{formatHours(totals.min, totals.max)}</strong>
-            <b>{formatBudget(totals.min, totals.max)}</b>
-            <span>{formatMonthRange(totals.min, totals.max)} з 2 сеньйор full-stack розробниками</span>
+            <p className="section-label">{currentScopeLabel}</p>
+            <strong>{formatHours(viewTotals.min, viewTotals.max)}</strong>
+            <b>{formatBudget(viewTotals.min, viewTotals.max)}</b>
+            <span>{formatMonthRange(viewTotals.min, viewTotals.max)} з 2 сеньйор full-stack розробниками</span>
             <span>Ставка: ${hourlyRateUsd}/год</span>
           </div>
 
@@ -1281,7 +1296,7 @@ function App() {
             </div>
             <div className="breakdown-list">
               {(Object.keys(categoryLabels) as Category[]).map((category) => {
-                const item = totals.breakdown[category]
+                const item = viewTotals.breakdown[category]
                 const width = Math.max(4, (item.max / maxCategory) * 100)
                 return (
                   <div className="breakdown-row" key={category}>
