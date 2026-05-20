@@ -24,6 +24,8 @@ type Milestone = {
   blocks: WorkBlock[]
 }
 
+const hourlyRateUsd = 30
+
 const milestones: Milestone[] = [
   {
     id: 'm1',
@@ -597,6 +599,15 @@ function formatMonthRange(min: number, max: number) {
   return `${low}-${high} міс.`
 }
 
+function formatBudget(min: number, max: number) {
+  const formatter = new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+    maximumFractionDigits: 0,
+  })
+  return `${formatter.format(min * hourlyRateUsd)}-${formatter.format(max * hourlyRateUsd)}`
+}
+
 function escapeHtml(value: string) {
   return value
     .replace(/&/g, '&amp;')
@@ -666,10 +677,13 @@ function App() {
     const text = [
       'Grandar MVP калькулятор обсягу',
       `Обрана оцінка: ${formatHours(totals.min, totals.max)}`,
+      `Орієнтовний бюджет: ${formatBudget(totals.min, totals.max)} за ставкою $${hourlyRateUsd}/год`,
       `Календар з 2 сеньйор full-stack розробниками: ${formatMonthRange(totals.min, totals.max)}`,
       '',
       'Обраний обсяг:',
-      ...totals.picked.map((block) => `- ${block.title}: ${formatHours(block.min, block.max)}`),
+      ...totals.picked.map(
+        (block) => `- ${block.title}: ${formatHours(block.min, block.max)} | ${formatBudget(block.min, block.max)}`,
+      ),
     ].join('\n')
     await navigator.clipboard.writeText(text)
   }
@@ -695,6 +709,7 @@ function App() {
               <strong>${escapeHtml(categoryLabels[category])}</strong>
               <span>${escapeHtml(formatHours(item.min, item.max))}</span>
             </div>
+            <em>${escapeHtml(formatBudget(item.min, item.max))}</em>
             <div class="pdf-bar"><i style="width: ${width}%"></i></div>
           </div>
         `
@@ -715,6 +730,7 @@ function App() {
                 <td>${escapeHtml(categoryLabels[block.category])}</td>
                 <td>${escapeHtml(priorityLabels[block.priority])}</td>
                 <td>${escapeHtml(formatHours(block.min, block.max))}</td>
+                <td>${escapeHtml(formatBudget(block.min, block.max))}</td>
               </tr>
             `,
           )
@@ -736,6 +752,7 @@ function App() {
                   <th>Тип</th>
                   <th>Статус</th>
                   <th>Оцінка</th>
+                  <th>Бюджет</th>
                 </tr>
               </thead>
               <tbody>${blockRows}</tbody>
@@ -801,7 +818,7 @@ function App() {
         }
         .pdf-hero {
           display: grid;
-          grid-template-columns: 1.1fr 0.9fr;
+          grid-template-columns: 1fr 0.8fr 1fr;
           gap: 18px;
           margin-bottom: 26px;
           padding: 24px;
@@ -811,7 +828,7 @@ function App() {
         }
         .pdf-hero strong {
           display: block;
-          font-size: 32px;
+          font-size: 28px;
           line-height: 1.05;
         }
         .pdf-hero span,
@@ -822,7 +839,7 @@ function App() {
         }
         .pdf-summary-grid {
           display: grid;
-          grid-template-columns: repeat(3, 1fr);
+          grid-template-columns: repeat(4, 1fr);
           gap: 10px;
           margin-bottom: 26px;
         }
@@ -869,7 +886,7 @@ function App() {
         }
         .pdf-breakdown-row {
           display: grid;
-          grid-template-columns: 190px 1fr;
+          grid-template-columns: 190px 96px 1fr;
           align-items: center;
           gap: 14px;
         }
@@ -881,6 +898,14 @@ function App() {
         }
         .pdf-breakdown-row span {
           color: #475569;
+        }
+        .pdf-breakdown-row em {
+          color: #111827;
+          font-size: 12px;
+          font-style: normal;
+          font-weight: 800;
+          text-align: right;
+          white-space: nowrap;
         }
         .pdf-bar {
           height: 8px;
@@ -981,6 +1006,10 @@ function App() {
             <strong>${escapeHtml(formatMonthRange(totals.min, totals.max))}</strong>
             <span>Календар з 2 сеньйор full-stack розробниками</span>
           </div>
+          <div>
+            <strong>${escapeHtml(formatBudget(totals.min, totals.max))}</strong>
+            <span>Орієнтовний бюджет за ставкою $${hourlyRateUsd}/год</span>
+          </div>
         </section>
 
         <div class="pdf-summary-grid">
@@ -995,6 +1024,10 @@ function App() {
           <div class="pdf-stat">
             <span>Ризики урізання</span>
             <strong>${removedWarnings.length}</strong>
+          </div>
+          <div class="pdf-stat">
+            <span>Ставка</span>
+            <strong>$${hourlyRateUsd}/год</strong>
           </div>
         </div>
 
@@ -1016,6 +1049,7 @@ function App() {
         <section class="pdf-card">
           <p class="pdf-muted">1 розробник повної зайнятості ≈ 160 год/місяць.</p>
           <p class="pdf-muted">2 сеньйор full-stack розробники ≈ 320 год/місяць.</p>
+          <p class="pdf-muted">Вартість розрахована за ставкою $${hourlyRateUsd}/год.</p>
           <p class="pdf-muted">Календар може змінюватися через приймальне тестування, доступи до інтеграцій і зміни обсягу.</p>
         </section>
       </div>
@@ -1118,6 +1152,10 @@ function App() {
             <strong>{formatMonthRange(totals.min, totals.max)}</strong>
           </div>
           <div>
+            <span>Бюджет</span>
+            <strong>{formatBudget(totals.min, totals.max)}</strong>
+          </div>
+          <div>
             <span>Обрані блоки</span>
             <strong>{totals.picked.length}/{allBlocks.length}</strong>
           </div>
@@ -1179,7 +1217,10 @@ function App() {
                     <h3>{milestone.title}</h3>
                     <p>{milestone.killerFeature}</p>
                   </div>
-                  <span className="hours-pill">{formatHours(milestoneMin, milestoneMax)}</span>
+                  <span className="hours-pill">
+                    {formatHours(milestoneMin, milestoneMax)}
+                    <small>{formatBudget(milestoneMin, milestoneMax)}</small>
+                  </span>
                 </div>
 
                 <div className="block-list">
@@ -1211,7 +1252,10 @@ function App() {
                         <span className={`category ${block.category.toLowerCase()}`}>
                           {categoryLabels[block.category]}
                         </span>
-                        <span className="block-hours">{formatHours(block.min, block.max)}</span>
+                        <span className="block-hours">
+                          {formatHours(block.min, block.max)}
+                          <small>{formatBudget(block.min, block.max)}</small>
+                        </span>
                       </button>
                     )
                   })}
@@ -1225,7 +1269,9 @@ function App() {
           <div className="summary-card total-card">
             <p className="section-label">Обрана оцінка</p>
             <strong>{formatHours(totals.min, totals.max)}</strong>
+            <b>{formatBudget(totals.min, totals.max)}</b>
             <span>{formatMonthRange(totals.min, totals.max)} з 2 сеньйор full-stack розробниками</span>
+            <span>Ставка: ${hourlyRateUsd}/год</span>
           </div>
 
           <div className="summary-card">
@@ -1241,7 +1287,10 @@ function App() {
                   <div className="breakdown-row" key={category}>
                     <div>
                       <span>{categoryLabels[category]}</span>
-                      <strong>{formatHours(item.min, item.max)}</strong>
+                      <strong>
+                        {formatHours(item.min, item.max)}
+                        <small>{formatBudget(item.min, item.max)}</small>
+                      </strong>
                     </div>
                     <div className="bar-track">
                       <div className="bar-fill" style={{ width: `${width}%` }} />
@@ -1275,6 +1324,7 @@ function App() {
             <h3>Припущення</h3>
             <p>1 розробник повної зайнятості ≈ 160 год/місяць.</p>
             <p>2 сеньйор full-stack розробники ≈ 320 год/місяць.</p>
+            <p>Вартість рахується за ставкою ${hourlyRateUsd}/год.</p>
             <p>Календар може змінюватися через приймальне тестування, доступи до інтеграцій і зміни обсягу.</p>
           </div>
         </aside>
