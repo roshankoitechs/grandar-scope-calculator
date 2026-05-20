@@ -1,16 +1,17 @@
-# Grandar MVP Scope Calculator
+# Grandar MVP калькулятор обсягу
 
-Guided MVP scope calculator for the Grandar Logistics Platform discovery.
+Керований калькулятор обсягу MVP для дискавері Grandar Logistics Platform.
 
-The calculator lets project stakeholders:
+Калькулятор дозволяє власникам проєкту:
 
-- review MVP milestones and work blocks;
-- keep required blocks locked;
-- remove recommended blocks and see the delivery impact;
-- compare selected hours and calendar estimate for 2 Senior Full-stack Developers;
-- view effort breakdown by Architecture, Product features, QA, Integrations, and Mobile app.
+- переглядати MVP майлстоуни та окремі блоки робіт;
+- тримати обовʼязкові блоки заблокованими;
+- прибирати рекомендовані блоки й одразу бачити наслідки для продукту;
+- порівнювати години та календарну оцінку для команди з 2 senior full-stack розробників;
+- бачити розподіл робіт за архітектурою, продуктовими функціями, тестуванням, інтеграціями та мобільним застосунком;
+- експортувати обраний обсяг у PDF.
 
-## Scripts
+## Команди
 
 ```bash
 npm install

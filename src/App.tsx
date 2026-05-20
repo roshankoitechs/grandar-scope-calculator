@@ -26,14 +26,14 @@ type Milestone = {
 const milestones: Milestone[] = [
   {
     id: 'm1',
-    title: 'Milestone 1 — Platform foundation',
+    title: 'Майлстоун 1 — Фундамент платформи',
     killerFeature:
       'У системі можна створювати організації, користувачів і базові ролі з ізоляцією даних.',
     blocks: [
       {
         id: 'm1-auth',
-        title: 'Authentication & sessions',
-        description: 'Login, password reset, session handling.',
+        title: 'Авторизація та сесії',
+        description: 'Вхід у систему, відновлення пароля, керування сесією.',
         min: 35,
         max: 55,
         category: 'Architecture',
@@ -41,8 +41,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm1-orgs',
-        title: 'Organizations model',
-        description: 'Вантажовласники, перевізники, Grandar internal org.',
+        title: 'Модель організацій',
+        description: 'Вантажовласники, перевізники, внутрішня організація Grandar.',
         min: 35,
         max: 55,
         category: 'Architecture',
@@ -50,8 +50,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm1-rbac',
-        title: 'Role-based access',
-        description: 'Базові ролі й permissions для MVP.',
+        title: 'Рольовий доступ',
+        description: 'Базові ролі та права доступу для MVP.',
         min: 50,
         max: 75,
         category: 'Architecture',
@@ -59,7 +59,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm1-admin',
-        title: 'Admin basics',
+        title: 'Базове адміністрування',
         description: 'Створення/редагування компаній і користувачів.',
         min: 50,
         max: 75,
@@ -68,7 +68,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm1-blocking',
-        title: 'Company blocking & verification status',
+        title: 'Блокування та статус верифікації компаній',
         description: 'Блокування компаній, базовий статус верифікації.',
         min: 18,
         max: 30,
@@ -78,7 +78,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm1-audit',
-        title: 'Audit foundation',
+        title: 'Базовий аудит',
         description: 'Логування тільки критичних дій MVP.',
         min: 20,
         max: 35,
@@ -88,8 +88,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm1-qa',
-        title: 'QA',
-        description: 'Role/access testing, базові negative cases.',
+        title: 'Тестування',
+        description: 'Перевірка ролей, доступів і базових негативних сценаріїв.',
         min: 30,
         max: 45,
         category: 'QA',
@@ -99,13 +99,13 @@ const milestones: Milestone[] = [
   },
   {
     id: 'm2',
-    title: 'Milestone 2 — Cargo owner onboarding & request',
+    title: 'Майлстоун 2 — Онбординг вантажовласника та заявка',
     killerFeature:
-      'Вантажовласник може створити заявку, зберегти її як чернетку й опублікувати для matching.',
+      'Вантажовласник може створити заявку, зберегти її як чернетку й опублікувати для підбору перевізника.',
     blocks: [
       {
         id: 'm2-portal',
-        title: 'Cargo owner portal',
+        title: 'Кабінет вантажовласника',
         description: 'Список заявок, статуси, базовий профіль компанії.',
         min: 45,
         max: 70,
@@ -114,7 +114,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm2-form',
-        title: 'Shipment request form',
+        title: 'Форма заявки на перевезення',
         description: 'Маршрут, базові точки, вантаж, вимоги до ТЗ, контакти.',
         min: 55,
         max: 85,
@@ -123,8 +123,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm2-multipoint',
-        title: 'Expanded multi-point route',
-        description: 'Декілька додаткових точок маршруту й edge cases валідації.',
+        title: 'Розширений мультиточковий маршрут',
+        description: 'Декілька додаткових точок маршруту й складні сценарії валідації.',
         min: 20,
         max: 35,
         category: 'Feature',
@@ -133,7 +133,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm2-pricing',
-        title: 'Pricing input',
+        title: 'Введення ціни',
         description: 'Ціна, валюта, базова видимість.',
         min: 20,
         max: 35,
@@ -142,7 +142,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm2-attachments',
-        title: 'Attachments',
+        title: 'Вкладення',
         description: 'Базові вкладення до заявки.',
         min: 25,
         max: 45,
@@ -152,7 +152,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm2-draft',
-        title: 'Draft/publish flow',
+        title: 'Чернетка та публікація',
         description: 'Чернетка, публікація, валідація.',
         min: 30,
         max: 50,
@@ -161,8 +161,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm2-qa',
-        title: 'QA',
-        description: 'Validation, visibility, базові edge cases.',
+        title: 'Тестування',
+        description: 'Валідація, видимість даних і базові складні сценарії.',
         min: 30,
         max: 50,
         category: 'QA',
@@ -172,13 +172,13 @@ const milestones: Milestone[] = [
   },
   {
     id: 'm3',
-    title: 'Milestone 3 — Carrier onboarding',
+    title: 'Майлстоун 3 — Онбординг перевізника',
     killerFeature:
       'Перевізник може бути заведений у систему, додати авто/водіїв і бути готовим приймати заявки.',
     blocks: [
       {
         id: 'm3-portal',
-        title: 'Carrier portal',
+        title: 'Кабінет перевізника',
         description: 'Профіль перевізника, користувачі, статус.',
         min: 40,
         max: 65,
@@ -187,7 +187,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm3-carrier-users',
-        title: 'Carrier user management',
+        title: 'Керування користувачами перевізника',
         description: 'Користувачі перевізника, базове редагування доступів.',
         min: 18,
         max: 30,
@@ -197,7 +197,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm3-fleet',
-        title: 'Fleet management',
+        title: 'Керування автопарком',
         description: 'Авто, тип ТЗ, тоннаж, активність.',
         min: 50,
         max: 80,
@@ -206,7 +206,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm3-drivers',
-        title: 'Driver management',
+        title: 'Керування водіями',
         description: 'Водії, привʼязка до перевізника, контакти.',
         min: 40,
         max: 65,
@@ -215,7 +215,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm3-finance',
-        title: 'Carrier finance view',
+        title: 'Фінансова видимість перевізника',
         description: 'Базова фінансова видимість перевізника.',
         min: 25,
         max: 45,
@@ -225,7 +225,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm3-docs',
-        title: 'Carrier documents',
+        title: 'Документи перевізника',
         description: 'Базові документи компанії/авто/водія.',
         min: 30,
         max: 50,
@@ -235,8 +235,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm3-qa',
-        title: 'QA',
-        description: 'Isolation, validation, базові permissions.',
+        title: 'Тестування',
+        description: 'Ізоляція даних, валідація та базові права доступу.',
         min: 30,
         max: 50,
         category: 'QA',
@@ -246,13 +246,13 @@ const milestones: Milestone[] = [
   },
   {
     id: 'm4',
-    title: 'Milestone 4 — Matching & atomic accept',
+    title: 'Майлстоун 4 — Підбір перевізника та атомарне прийняття',
     killerFeature:
       'Заявка доходить до релевантних перевізників і може бути прийнята без подвійного призначення.',
     blocks: [
       {
         id: 'm4-rules',
-        title: 'Matching rules',
+        title: 'Правила підбору перевізників',
         description: 'Тип ТЗ, тоннаж, напрямок, активність.',
         min: 45,
         max: 70,
@@ -261,17 +261,17 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm4-geo-rating',
-        title: 'Geo/rating matching refinements',
+        title: 'Уточнення підбору за географією та рейтингом',
         description: 'Географія, рейтинг і уточнення релевантності перевізників.',
         min: 20,
         max: 35,
         category: 'Architecture',
         priority: 'recommended',
-        consequence: 'Matching буде простішим: без тонкого рейтингу/географії, більше ручного контролю з боку Grandar.',
+        consequence: 'Підбір буде простішим: без тонкого рейтингу/географії, більше ручного контролю з боку Grandar.',
       },
       {
         id: 'm4-distribution',
-        title: 'Request distribution',
+        title: 'Розсилка заявки',
         description: 'Розсилка релевантним перевізникам.',
         min: 40,
         max: 65,
@@ -280,8 +280,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm4-notifications',
-        title: 'Web/push notifications',
-        description: 'Базові web notifications для перевізників.',
+        title: 'Веб- і push-нотифікації',
+        description: 'Базові веб-нотифікації для перевізників.',
         min: 25,
         max: 40,
         category: 'Feature',
@@ -289,7 +289,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm4-repeat-notifications',
-        title: 'Repeated notification rules',
+        title: 'Правила повторних повідомлень',
         description: 'Повторні повідомлення через заданий час.',
         min: 15,
         max: 25,
@@ -299,8 +299,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm4-atomic',
-        title: 'Atomic accept',
-        description: 'Server-side lock, race condition handling.',
+        title: 'Атомарне прийняття',
+        description: 'Серверне блокування та обробка одночасних прийнять.',
         min: 55,
         max: 85,
         category: 'Architecture',
@@ -308,7 +308,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm4-ux',
-        title: 'Carrier accept/decline UX',
+        title: 'UX прийняття заявки перевізником',
         description: 'Прийняти заявку, призначити авто/водія.',
         min: 40,
         max: 65,
@@ -317,7 +317,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm4-decline-reason',
-        title: 'Decline reason flow',
+        title: 'Причина відмови від заявки',
         description: 'Відмова від заявки з причиною.',
         min: 15,
         max: 25,
@@ -327,8 +327,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm4-qa',
-        title: 'QA',
-        description: 'Concurrency, matching, notification tests.',
+        title: 'Тестування',
+        description: 'Перевірка одночасних дій, підбору перевізників і нотифікацій.',
         min: 45,
         max: 70,
         category: 'QA',
@@ -338,14 +338,14 @@ const milestones: Milestone[] = [
   },
   {
     id: 'm5',
-    title: 'Milestone 5 — Driver app',
+    title: 'Майлстоун 5 — Застосунок водія',
     killerFeature:
       'Водій бачить призначені рейси, передає GPS для Grandar і завантажує фото/документи по рейсу.',
     blocks: [
       {
         id: 'm5-foundation',
-        title: 'Driver app foundation',
-        description: 'React Native app, login, tabbar/navigation, API integration.',
+        title: 'Фундамент застосунку водія',
+        description: 'React Native застосунок, вхід у систему, нижня навігація, API-інтеграція.',
         min: 50,
         max: 80,
         category: 'Mobile',
@@ -353,8 +353,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm5-profile',
-        title: 'Driver profile',
-        description: 'Профіль водія, компанія, авто, permissions status.',
+        title: 'Профіль водія',
+        description: 'Профіль водія, компанія, авто, статус дозволів застосунку.',
         min: 20,
         max: 35,
         category: 'Mobile',
@@ -363,7 +363,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm5-trips',
-        title: 'Trip list & details',
+        title: 'Список і деталі рейсів',
         description: 'Список рейсів, точки, вантаж, контакти, авто, статус.',
         min: 40,
         max: 65,
@@ -372,8 +372,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm5-gps',
-        title: 'GPS tracking',
-        description: 'Background location для Grandar, permission handling, GPS status.',
+        title: 'GPS-відстеження',
+        description: 'Фонове відстеження для Grandar, обробка дозволів, статус GPS.',
         min: 65,
         max: 105,
         category: 'Mobile',
@@ -381,8 +381,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm5-docs',
-        title: 'Documents/photos',
-        description: 'Камера, upload фото/сканів, привʼязка до рейсу.',
+        title: 'Документи та фото',
+        description: 'Камера, завантаження фото/сканів, привʼязка до рейсу.',
         min: 50,
         max: 80,
         category: 'Mobile',
@@ -390,7 +390,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm5-statuses',
-        title: 'Basic trip statuses',
+        title: 'Базові статуси рейсу',
         description: 'Мінімальні статуси рейсу.',
         min: 25,
         max: 45,
@@ -400,8 +400,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm5-push',
-        title: 'Push notifications',
-        description: 'Призначення рейсу, нагадування, відкриття потрібного екрана в app.',
+        title: 'Push-нотифікації',
+        description: 'Призначення рейсу, нагадування, відкриття потрібного екрана в застосунку.',
         min: 35,
         max: 60,
         category: 'Mobile',
@@ -409,8 +409,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm5-qa',
-        title: 'QA',
-        description: 'Mobile QA, GPS/upload tests, базові device checks.',
+        title: 'Тестування',
+        description: 'Мобільне тестування, перевірка GPS/завантажень і базові перевірки пристроїв.',
         min: 50,
         max: 80,
         category: 'QA',
@@ -420,14 +420,14 @@ const milestones: Milestone[] = [
   },
   {
     id: 'm6',
-    title: 'Milestone 6 — Grandar operations & finance',
+    title: 'Майлстоун 6 — Операції та фінанси Grandar',
     killerFeature:
-      'Grandar бачить рейси, статуси, документи, GPS tracking і базову фінансову маржу.',
+      'Grandar бачить рейси, статуси, документи, GPS-відстеження і базову фінансову маржу.',
     blocks: [
       {
         id: 'm6-dashboard',
-        title: 'Operations dashboard',
-        description: 'Активні рейси, статуси, базовий GPS view.',
+        title: 'Операційний дашборд',
+        description: 'Активні рейси, статуси, базовий перегляд GPS.',
         min: 50,
         max: 80,
         category: 'Feature',
@@ -435,7 +435,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm6-exceptions',
-        title: 'Exceptions queue',
+        title: 'Черга винятків',
         description: 'Окрема черга винятків і проблемних рейсів.',
         min: 20,
         max: 35,
@@ -445,8 +445,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm6-trip',
-        title: 'Trip detail for Grandar',
-        description: 'Учасники, timeline, документи, GPS, фінансовий статус.',
+        title: 'Картка рейсу для Grandar',
+        description: 'Учасники, хронологія, документи, GPS, фінансовий статус.',
         min: 50,
         max: 80,
         category: 'Feature',
@@ -454,7 +454,7 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm6-docs',
-        title: 'Document workspace',
+        title: 'Робоча зона документів',
         description: 'Список документів рейсу.',
         min: 35,
         max: 55,
@@ -463,17 +463,17 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm6-doc-statuses',
-        title: 'Document status workflow',
-        description: 'Missing/approved statuses і ручна перевірка документів.',
+        title: 'Статусний процес документів',
+        description: 'Статуси відсутніх/підтверджених документів і ручна перевірка.',
         min: 20,
         max: 35,
         category: 'Feature',
         priority: 'recommended',
-        consequence: 'Документи будуть збережені по рейсу, але без повного статусного workflow перевірки.',
+        consequence: 'Документи будуть збережені по рейсу, але без повного статусного процесу перевірки.',
       },
       {
         id: 'm6-finance',
-        title: 'Finance core',
+        title: 'Фінансове ядро',
         description: 'Ціна вантажовласника, ціна перевізника, маржа, валюти.',
         min: 70,
         max: 115,
@@ -482,18 +482,18 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm6-reporting',
-        title: 'Basic reporting',
-        description: 'Базові exports і фільтри.',
+        title: 'Базова звітність',
+        description: 'Базові експорти та фільтри.',
         min: 35,
         max: 60,
         category: 'Feature',
         priority: 'recommended',
-        consequence: 'Звіти для операцій і фінансів доведеться збирати вручну з таблиць або базових exports.',
+        consequence: 'Звіти для операцій і фінансів доведеться збирати вручну з таблиць або базових експортів.',
       },
       {
         id: 'm6-qa',
-        title: 'QA',
-        description: 'Permissions, finance visibility, document access.',
+        title: 'Тестування',
+        description: 'Права доступу, фінансова видимість і доступ до документів.',
         min: 45,
         max: 70,
         category: 'QA',
@@ -503,14 +503,14 @@ const milestones: Milestone[] = [
   },
   {
     id: 'm7',
-    title: 'Milestone 7 — Migration, integrations, beta launch',
+    title: 'Майлстоун 7 — Міграція, інтеграції та бета-запуск',
     killerFeature:
-      'MVP готовий до beta launch з першими компаніями, базовими даними й мінімальним інтеграційним контуром.',
+      'MVP готовий до бета-запуску з першими компаніями, базовими даними й мінімальним інтеграційним контуром.',
     blocks: [
       {
         id: 'm7-sheets',
-        title: 'Google Sheets migration',
-        description: 'Mapping, мінімальний import, validation.',
+        title: 'Міграція з Google Sheets',
+        description: 'Мапінг, мінімальний імпорт, валідація.',
         min: 40,
         max: 75,
         category: 'Integration',
@@ -518,18 +518,18 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm7-medoc',
-        title: 'M.E.Doc baseline',
-        description: 'Погоджений формат export/import або manual-assisted workflow.',
+        title: 'Базовий контур M.E.Doc',
+        description: 'Погоджений формат експорту/імпорту або напівручний процес.',
         min: 45,
         max: 90,
         category: 'Integration',
         priority: 'recommended',
-        consequence: 'Бухгалтерський документообіг залишиться ручним на перший beta запуск.',
+        consequence: 'Бухгалтерський документообіг залишиться ручним на перший бета-запуск.',
       },
       {
         id: 'm7-bas',
-        title: '1C/BAS baseline',
-        description: 'Мінімальний export/import реєстрів.',
+        title: 'Базовий контур 1C/BAS',
+        description: 'Мінімальний експорт/імпорт реєстрів.',
         min: 45,
         max: 90,
         category: 'Integration',
@@ -537,8 +537,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm7-hardening',
-        title: 'Beta hardening',
-        description: 'Bug fixing, release checklist, monitoring basics.',
+        title: 'Підготовка до бета-запуску',
+        description: 'Виправлення помилок, чеклист релізу, базовий моніторинг.',
         min: 65,
         max: 110,
         category: 'Architecture',
@@ -546,8 +546,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm7-uat',
-        title: 'UAT support',
-        description: 'Тестування з Grandar, fixes, launch notes.',
+        title: 'Підтримка приймального тестування',
+        description: 'Тестування з Grandar, виправлення, нотатки до запуску.',
         min: 45,
         max: 75,
         category: 'QA',
@@ -555,8 +555,8 @@ const milestones: Milestone[] = [
       },
       {
         id: 'm7-regression',
-        title: 'QA regression',
-        description: 'Critical MVP regression pass.',
+        title: 'Регресійне тестування',
+        description: 'Критична регресійна перевірка MVP.',
         min: 60,
         max: 95,
         category: 'QA',
@@ -567,17 +567,17 @@ const milestones: Milestone[] = [
 ]
 
 const categoryLabels: Record<Category, string> = {
-  Architecture: 'Architecture',
-  Feature: 'Product features',
-  QA: 'QA & UAT',
-  Integration: 'Integrations',
-  Mobile: 'Mobile app',
+  Architecture: 'Архітектура',
+  Feature: 'Продуктові функції',
+  QA: 'Тестування та приймання',
+  Integration: 'Інтеграції',
+  Mobile: 'Мобільний застосунок',
 }
 
 const priorityLabels: Record<Priority, string> = {
-  required: 'Required',
-  recommended: 'Recommended',
-  optional: 'Optional',
+  required: 'Обовʼязково',
+  recommended: 'Можна урізати',
+  optional: 'Опційно',
 }
 
 const allBlocks = milestones.flatMap((milestone) =>
@@ -587,13 +587,13 @@ const allBlocks = milestones.flatMap((milestone) =>
 const initialSelected = Object.fromEntries(allBlocks.map((block) => [block.id, true]))
 
 function formatHours(min: number, max: number) {
-  return `${min.toLocaleString('en-US')}-${max.toLocaleString('en-US')} h`
+  return `${min.toLocaleString('uk-UA')}-${max.toLocaleString('uk-UA')} год`
 }
 
 function formatMonthRange(min: number, max: number) {
   const low = (min / 320).toFixed(1)
   const high = (max / 320).toFixed(1)
-  return `${low}-${high} mo`
+  return `${low}-${high} міс.`
 }
 
 function wrapText(doc: jsPDF, value: string, maxWidth: number) {
@@ -644,7 +644,7 @@ function App() {
     setSelected((current) => ({ ...current, [block.id]: !current[block.id] }))
   }
 
-  function resetRecommended() {
+  function resetRecommendedScope() {
     setSelected(initialSelected)
   }
 
@@ -658,11 +658,11 @@ function App() {
 
   async function copySummary() {
     const text = [
-      'Grandar MVP Scope Calculator',
-      `Selected effort: ${formatHours(totals.min, totals.max)}`,
-      `Calendar with 2 Senior Full-stack Developers: ${formatMonthRange(totals.min, totals.max)}`,
+      'Grandar MVP калькулятор обсягу',
+      `Обрана оцінка: ${formatHours(totals.min, totals.max)}`,
+      `Календар з 2 сеньйор full-stack розробниками: ${formatMonthRange(totals.min, totals.max)}`,
       '',
-      'Selected scope:',
+      'Обраний обсяг:',
       ...totals.picked.map((block) => `- ${block.title}: ${formatHours(block.min, block.max)}`),
     ].join('\n')
     await navigator.clipboard.writeText(text)
@@ -719,11 +719,11 @@ function App() {
     doc.text('G', margin + 12, y + 23)
     doc.setTextColor(17, 24, 39)
     doc.setFontSize(18)
-    doc.text('Grandar MVP Scope Selection', margin + 48, y + 15)
+    doc.text('Grandar MVP — обраний обсяг', margin + 48, y + 15)
     doc.setFont('helvetica', 'normal')
     doc.setFontSize(9)
     doc.setTextColor(102, 112, 133)
-    doc.text(`Generated ${new Date().toLocaleDateString('en-GB')}`, margin + 48, y + 31)
+    doc.text(`Згенеровано ${new Date().toLocaleDateString('uk-UA')}`, margin + 48, y + 31)
     y += 62
 
     doc.setFillColor(17, 24, 39)
@@ -734,30 +734,30 @@ function App() {
     doc.text(formatHours(totals.min, totals.max), margin + 22, y + 35)
     doc.setFontSize(11)
     doc.setTextColor(213, 219, 229)
-    doc.text('Selected MVP effort', margin + 22, y + 58)
+    doc.text('Обрана оцінка MVP', margin + 22, y + 58)
     doc.setTextColor(255, 255, 255)
     doc.setFontSize(18)
     doc.text(formatMonthRange(totals.min, totals.max), margin + 300, y + 35)
     doc.setTextColor(213, 219, 229)
     doc.setFontSize(11)
-    doc.text('Calendar with 2 Senior Full-stack Developers', margin + 300, y + 58)
+    doc.text('Календар з 2 сеньйор full-stack розробниками', margin + 300, y + 58)
     y += 112
 
     addText(
-      'This PDF reflects the scope configuration selected in the guided calculator. Required blocks are treated as locked MVP logic. Removed recommended blocks are listed with their expected impact.',
+      'Цей PDF фіксує конфігурацію обсягу, яку обрали в керованому калькуляторі. Обовʼязкові блоки вважаються зафіксованою логікою MVP. Прибрані блоки показані разом із наслідками.',
       10,
       'normal',
       [71, 84, 103],
       4,
     )
 
-    addSectionTitle('Breakdown by work type')
+    addSectionTitle('Розподіл за типом робіт')
     ;(Object.keys(categoryLabels) as Category[]).forEach((category) => {
       const item = totals.breakdown[category]
       addText(`${categoryLabels[category]}: ${formatHours(item.min, item.max)}`, 10, 'bold')
     })
 
-    addSectionTitle('Selected scope')
+    addSectionTitle('Обраний обсяг')
     milestones.forEach((milestone) => {
       const pickedBlocks = milestone.blocks.filter((block) => selected[block.id])
       if (pickedBlocks.length === 0) return
@@ -777,9 +777,9 @@ function App() {
       y += 4
     })
 
-    addSectionTitle('Removed impact')
+    addSectionTitle('Наслідки урізання')
     if (removedWarnings.length === 0) {
-      addText('Recommended MVP scope is intact. No recommended blocks were removed.', 10)
+      addText('Рекомендований обсяг MVP не змінено. Жоден рекомендований блок не прибрано.', 10)
     } else {
       removedWarnings.forEach((block) => {
         addText(`${block.title}`, 10, 'bold')
@@ -787,12 +787,12 @@ function App() {
       })
     }
 
-    addSectionTitle('Assumptions')
-    addText('1 full-time developer ≈ 160 h/month.', 10)
-    addText('2 Senior Full-stack Developers ≈ 320 h/month.', 10)
-    addText('Calendar can shift with UAT, integration access, feedback cycles, and scope changes.', 10)
+    addSectionTitle('Припущення')
+    addText('1 розробник повної зайнятості ≈ 160 год/місяць.', 10)
+    addText('2 сеньйор full-stack розробники ≈ 320 год/місяць.', 10)
+    addText('Календар може змінюватися через приймальне тестування, доступи до інтеграцій, цикли зворотного звʼязку і зміни обсягу.', 10)
 
-    doc.save('grandar-mvp-scope-selection.pdf')
+    doc.save('grandar-mvp-obranij-scope.pdf')
   }
 
   return (
@@ -801,58 +801,58 @@ function App() {
         <div className="brand">
           <div className="brand-mark">G</div>
           <div>
-            <p className="eyeline">Koitechs discovery tool</p>
-            <h1>Grandar MVP Scope Calculator</h1>
+            <p className="eyeline">Інструмент дискавері від Koitechs</p>
+            <h1>Grandar MVP калькулятор обсягу</h1>
           </div>
         </div>
         <div className="topbar-actions">
           <button className="ghost-button" type="button" onClick={selectLeanMvp}>
-            Lean MVP
+            Мінімальний MVP
           </button>
-          <button className="ghost-button" type="button" onClick={resetRecommended}>
-            Recommended
+          <button className="ghost-button" type="button" onClick={resetRecommendedScope}>
+            Рекомендований обсяг
           </button>
           <button className="primary-button" type="button" onClick={copySummary}>
-            Copy summary
+            Скопіювати підсумок
           </button>
           <button className="primary-button export-button" type="button" onClick={exportPdf}>
-            Export PDF
+            Експорт PDF
           </button>
         </div>
       </header>
 
       <section className="hero-panel">
         <div>
-          <p className="section-label">Guided estimator</p>
-          <h2>Choose scope without breaking the MVP logic.</h2>
+          <p className="section-label">Керований калькулятор</p>
+          <h2>Оберіть обсяг без втрати логіки MVP.</h2>
           <p>
-            Required blocks stay locked. Recommended blocks can be removed, but the
-            calculator shows what risk or manual fallback this creates.
+            Обовʼязкові блоки заблоковані. Рекомендовані блоки можна прибирати, а калькулятор
+            показує, який ризик або ручний процес це створює.
           </p>
         </div>
-        <div className="hero-stats" aria-label="Current estimate">
+        <div className="hero-stats" aria-label="Поточна оцінка">
           <div>
-            <span>Total effort</span>
+            <span>Загальна оцінка</span>
             <strong>{formatHours(totals.min, totals.max)}</strong>
           </div>
           <div>
-            <span>2 senior devs</span>
+            <span>2 senior розробники</span>
             <strong>{formatMonthRange(totals.min, totals.max)}</strong>
           </div>
           <div>
-            <span>Selected blocks</span>
+            <span>Обрані блоки</span>
             <strong>{totals.picked.length}/{allBlocks.length}</strong>
           </div>
         </div>
       </section>
 
-      <nav className="milestone-nav" aria-label="Milestone filters">
+      <nav className="milestone-nav" aria-label="Фільтри майлстоунів">
         <button
           className={activeMilestone === 'all' ? 'active' : ''}
           type="button"
           onClick={() => setActiveMilestone('all')}
         >
-          All milestones
+          Усі майлстоуни
         </button>
         {milestones.map((milestone, index) => (
           <button
@@ -867,11 +867,11 @@ function App() {
       </nav>
 
       <div className="workspace">
-        <section className="milestone-list" aria-label="Milestone work blocks">
+        <section className="milestone-list" aria-label="Блоки робіт по майлстоунах">
           <div className="list-toolbar">
             <div>
-              <p className="section-label">MVP milestones</p>
-              <h2>Scope blocks</h2>
+              <p className="section-label">MVP майлстоуни</p>
+              <h2>Блоки обсягу</h2>
             </div>
             <label className="switch">
               <input
@@ -879,7 +879,7 @@ function App() {
                 checked={showOnlyRemovable}
                 onChange={(event) => setShowOnlyRemovable(event.target.checked)}
               />
-              Show removable only
+              Показати тільки те, що можна урізати
             </label>
           </div>
 
@@ -919,7 +919,7 @@ function App() {
                         onClick={() => toggleBlock(block)}
                       >
                         <span className="check" aria-hidden="true">
-                          {isLocked ? 'L' : isSelected ? '✓' : ''}
+                          {isLocked ? '•' : isSelected ? '✓' : ''}
                         </span>
                         <span className="block-main">
                           <span className="block-title-row">
@@ -943,17 +943,17 @@ function App() {
           })}
         </section>
 
-        <aside className="summary-panel" aria-label="Estimate summary">
+        <aside className="summary-panel" aria-label="Підсумок оцінки">
           <div className="summary-card total-card">
-            <p className="section-label">Selected estimate</p>
+            <p className="section-label">Обрана оцінка</p>
             <strong>{formatHours(totals.min, totals.max)}</strong>
-            <span>{formatMonthRange(totals.min, totals.max)} with 2 senior full-stack developers</span>
+            <span>{formatMonthRange(totals.min, totals.max)} з 2 сеньйор full-stack розробниками</span>
           </div>
 
           <div className="summary-card">
             <div className="summary-heading">
-              <h3>Breakdown</h3>
-              <span>hours by work type</span>
+              <h3>Розподіл</h3>
+              <span>години за типом робіт</span>
             </div>
             <div className="breakdown-list">
               {(Object.keys(categoryLabels) as Category[]).map((category) => {
@@ -976,11 +976,11 @@ function App() {
 
           <div className="summary-card">
             <div className="summary-heading">
-              <h3>Removed impact</h3>
-              <span>{removedWarnings.length} warning(s)</span>
+              <h3>Наслідки урізання</h3>
+              <span>{removedWarnings.length} ризиків</span>
             </div>
             {removedWarnings.length === 0 ? (
-              <p className="empty-state">Recommended MVP scope is intact.</p>
+              <p className="empty-state">Рекомендований обсяг MVP не змінено.</p>
             ) : (
               <ul className="warning-list">
                 {removedWarnings.map((block) => (
@@ -994,10 +994,10 @@ function App() {
           </div>
 
           <div className="summary-card assumptions">
-            <h3>Assumptions</h3>
-            <p>1 full-time developer ≈ 160 h/month.</p>
-            <p>2 Senior Full-stack Developers ≈ 320 h/month.</p>
-            <p>Calendar can shift with UAT, integration access, and scope changes.</p>
+            <h3>Припущення</h3>
+            <p>1 розробник повної зайнятості ≈ 160 год/місяць.</p>
+            <p>2 сеньйор full-stack розробники ≈ 320 год/місяць.</p>
+            <p>Календар може змінюватися через приймальне тестування, доступи до інтеграцій і зміни обсягу.</p>
           </div>
         </aside>
       </div>
