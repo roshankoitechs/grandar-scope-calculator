@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { jsPDF } from 'jspdf'
 import './App.css'
 
 type Category = 'Architecture' | 'Feature' | 'QA' | 'Integration' | 'Mobile'
@@ -516,6 +517,10 @@ function formatMonthRange(min: number, max: number) {
   return `${low}-${high} mo`
 }
 
+function wrapText(doc: jsPDF, value: string, maxWidth: number) {
+  return doc.splitTextToSize(value, maxWidth) as string[]
+}
+
 function App() {
   const [selected, setSelected] = useState<Record<string, boolean>>(initialSelected)
   const [activeMilestone, setActiveMilestone] = useState('all')
@@ -584,6 +589,133 @@ function App() {
     await navigator.clipboard.writeText(text)
   }
 
+  function exportPdf() {
+    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
+    const pageWidth = doc.internal.pageSize.getWidth()
+    const pageHeight = doc.internal.pageSize.getHeight()
+    const margin = 44
+    const contentWidth = pageWidth - margin * 2
+    let y = margin
+
+    const ensureSpace = (height: number) => {
+      if (y + height <= pageHeight - margin) return
+      doc.addPage()
+      y = margin
+    }
+
+    const addText = (
+      value: string,
+      size = 10,
+      style: 'normal' | 'bold' = 'normal',
+      color: [number, number, number] = [17, 24, 39],
+      lineGap = 4,
+      width = contentWidth,
+    ) => {
+      doc.setFont('helvetica', style)
+      doc.setFontSize(size)
+      doc.setTextColor(...color)
+      const lines = wrapText(doc, value, width)
+      ensureSpace(lines.length * (size + lineGap) + 2)
+      doc.text(lines, margin, y)
+      y += lines.length * (size + lineGap)
+    }
+
+    const addSectionTitle = (value: string) => {
+      y += 10
+      ensureSpace(30)
+      doc.setFillColor(227, 6, 19)
+      doc.rect(margin, y - 6, 4, 22, 'F')
+      doc.setFont('helvetica', 'bold')
+      doc.setFontSize(14)
+      doc.setTextColor(17, 24, 39)
+      doc.text(value, margin + 12, y + 9)
+      y += 28
+    }
+
+    doc.setFillColor(227, 6, 19)
+    doc.roundedRect(margin, y, 34, 34, 8, 8, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(17)
+    doc.text('G', margin + 12, y + 23)
+    doc.setTextColor(17, 24, 39)
+    doc.setFontSize(18)
+    doc.text('Grandar MVP Scope Selection', margin + 48, y + 15)
+    doc.setFont('helvetica', 'normal')
+    doc.setFontSize(9)
+    doc.setTextColor(102, 112, 133)
+    doc.text(`Generated ${new Date().toLocaleDateString('en-GB')}`, margin + 48, y + 31)
+    y += 62
+
+    doc.setFillColor(17, 24, 39)
+    doc.roundedRect(margin, y, contentWidth, 86, 12, 12, 'F')
+    doc.setTextColor(255, 255, 255)
+    doc.setFont('helvetica', 'bold')
+    doc.setFontSize(24)
+    doc.text(formatHours(totals.min, totals.max), margin + 22, y + 35)
+    doc.setFontSize(11)
+    doc.setTextColor(213, 219, 229)
+    doc.text('Selected MVP effort', margin + 22, y + 58)
+    doc.setTextColor(255, 255, 255)
+    doc.setFontSize(18)
+    doc.text(formatMonthRange(totals.min, totals.max), margin + 300, y + 35)
+    doc.setTextColor(213, 219, 229)
+    doc.setFontSize(11)
+    doc.text('Calendar with 2 Senior Full-stack Developers', margin + 300, y + 58)
+    y += 112
+
+    addText(
+      'This PDF reflects the scope configuration selected in the guided calculator. Required blocks are treated as locked MVP logic. Removed recommended blocks are listed with their expected impact.',
+      10,
+      'normal',
+      [71, 84, 103],
+      4,
+    )
+
+    addSectionTitle('Breakdown by work type')
+    ;(Object.keys(categoryLabels) as Category[]).forEach((category) => {
+      const item = totals.breakdown[category]
+      addText(`${categoryLabels[category]}: ${formatHours(item.min, item.max)}`, 10, 'bold')
+    })
+
+    addSectionTitle('Selected scope')
+    milestones.forEach((milestone) => {
+      const pickedBlocks = milestone.blocks.filter((block) => selected[block.id])
+      if (pickedBlocks.length === 0) return
+      const milestoneMin = pickedBlocks.reduce((sum, block) => sum + block.min, 0)
+      const milestoneMax = pickedBlocks.reduce((sum, block) => sum + block.max, 0)
+      ensureSpace(54)
+      addText(`${milestone.title} — ${formatHours(milestoneMin, milestoneMax)}`, 12, 'bold')
+      addText(milestone.killerFeature, 9, 'normal', [102, 112, 133])
+      pickedBlocks.forEach((block) => {
+        addText(
+          `• ${block.title}: ${formatHours(block.min, block.max)} | ${categoryLabels[block.category]} | ${priorityLabels[block.priority]}`,
+          9,
+          'normal',
+          [17, 24, 39],
+        )
+      })
+      y += 4
+    })
+
+    addSectionTitle('Removed impact')
+    if (removedWarnings.length === 0) {
+      addText('Recommended MVP scope is intact. No recommended blocks were removed.', 10)
+    } else {
+      removedWarnings.forEach((block) => {
+        addText(`${block.title}`, 10, 'bold')
+        addText(block.consequence ?? '', 9, 'normal', [102, 112, 133])
+      })
+    }
+
+    addSectionTitle('Assumptions')
+    addText('1 full-time developer ≈ 160 h/month.', 10)
+    addText('2 Senior Full-stack Developers ≈ 320 h/month.', 10)
+    addText('Calendar can shift with UAT, integration access, feedback cycles, and scope changes.', 10)
+
+    doc.save('grandar-mvp-scope-selection.pdf')
+  }
+
   return (
     <main className="app-shell">
       <header className="topbar">
@@ -603,6 +735,9 @@ function App() {
           </button>
           <button className="primary-button" type="button" onClick={copySummary}>
             Copy summary
+          </button>
+          <button className="primary-button export-button" type="button" onClick={exportPdf}>
+            Export PDF
           </button>
         </div>
       </header>

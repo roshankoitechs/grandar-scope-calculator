@@ -85,6 +85,12 @@ button {
   box-shadow: 0 12px 24px rgba(227, 6, 19, 0.18);
 }
 
+.export-button {
+  background: #111827;
+  border-color: #111827;
+  box-shadow: 0 12px 24px rgba(17, 24, 39, 0.14);
+}
+
 .ghost-button {
   color: #111827;
   background: #fff;
@@ -608,7 +614,7 @@ button {
 
   .topbar-actions {
     display: grid;
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
     width: 100%;
     max-width: 100%;
   }
@@ -656,3 +662,10 @@ button {
     justify-self: start;
   }
 }
+  .topbar-actions .primary-button {
+    grid-column: 1 / -1;
+  }
+
+  .topbar-actions .export-button {
+    grid-column: 1 / -1;
+  }
