@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import html2canvas from 'html2canvas'
 import { jsPDF } from 'jspdf'
 import './App.css'
 
@@ -90,8 +91,8 @@ const milestones: Milestone[] = [
         id: 'm1-qa',
         title: 'Тестування',
         description: 'Перевірка ролей, доступів і базових негативних сценаріїв.',
-        min: 30,
-        max: 45,
+        min: 10,
+        max: 20,
         category: 'QA',
         priority: 'required',
       },
@@ -163,8 +164,8 @@ const milestones: Milestone[] = [
         id: 'm2-qa',
         title: 'Тестування',
         description: 'Валідація, видимість даних і базові складні сценарії.',
-        min: 30,
-        max: 50,
+        min: 20,
+        max: 25,
         category: 'QA',
         priority: 'required',
       },
@@ -237,8 +238,8 @@ const milestones: Milestone[] = [
         id: 'm3-qa',
         title: 'Тестування',
         description: 'Ізоляція даних, валідація та базові права доступу.',
-        min: 30,
-        max: 50,
+        min: 20,
+        max: 25,
         category: 'QA',
         priority: 'required',
       },
@@ -329,8 +330,8 @@ const milestones: Milestone[] = [
         id: 'm4-qa',
         title: 'Тестування',
         description: 'Перевірка одночасних дій, підбору перевізників і нотифікацій.',
-        min: 45,
-        max: 70,
+        min: 30,
+        max: 40,
         category: 'QA',
         priority: 'required',
       },
@@ -411,8 +412,8 @@ const milestones: Milestone[] = [
         id: 'm5-qa',
         title: 'Тестування',
         description: 'Мобільне тестування, перевірка GPS/завантажень і базові перевірки пристроїв.',
-        min: 50,
-        max: 80,
+        min: 30,
+        max: 40,
         category: 'QA',
         priority: 'required',
       },
@@ -494,8 +495,8 @@ const milestones: Milestone[] = [
         id: 'm6-qa',
         title: 'Тестування',
         description: 'Права доступу, фінансова видимість і доступ до документів.',
-        min: 45,
-        max: 70,
+        min: 20,
+        max: 30,
         category: 'QA',
         priority: 'required',
       },
@@ -557,8 +558,8 @@ const milestones: Milestone[] = [
         id: 'm7-regression',
         title: 'Регресійне тестування',
         description: 'Критична регресійна перевірка MVP.',
-        min: 60,
-        max: 95,
+        min: 40,
+        max: 60,
         category: 'QA',
         priority: 'required',
       },
@@ -596,8 +597,13 @@ function formatMonthRange(min: number, max: number) {
   return `${low}-${high} міс.`
 }
 
-function wrapText(doc: jsPDF, value: string, maxWidth: number) {
-  return doc.splitTextToSize(value, maxWidth) as string[]
+function escapeHtml(value: string) {
+  return value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#039;')
 }
 
 function App() {
@@ -668,131 +674,403 @@ function App() {
     await navigator.clipboard.writeText(text)
   }
 
-  function exportPdf() {
-    const doc = new jsPDF({ unit: 'pt', format: 'a4' })
-    const pageWidth = doc.internal.pageSize.getWidth()
-    const pageHeight = doc.internal.pageSize.getHeight()
-    const margin = 44
-    const contentWidth = pageWidth - margin * 2
-    let y = margin
+  function createPdfReportElement() {
+    const report = document.createElement('div')
+    report.style.position = 'fixed'
+    report.style.left = '-10000px'
+    report.style.top = '0'
+    report.style.width = '794px'
+    report.style.background = '#ffffff'
+    report.style.color = '#111827'
+    report.style.fontFamily = 'Arial, sans-serif'
+    report.style.zIndex = '-1'
 
-    const ensureSpace = (height: number) => {
-      if (y + height <= pageHeight - margin) return
-      doc.addPage()
-      y = margin
-    }
+    const categoryRows = (Object.keys(categoryLabels) as Category[])
+      .map((category) => {
+        const item = totals.breakdown[category]
+        const width = Math.max(4, (item.max / maxCategory) * 100)
+        return `
+          <div class="pdf-breakdown-row">
+            <div>
+              <strong>${escapeHtml(categoryLabels[category])}</strong>
+              <span>${escapeHtml(formatHours(item.min, item.max))}</span>
+            </div>
+            <div class="pdf-bar"><i style="width: ${width}%"></i></div>
+          </div>
+        `
+      })
+      .join('')
 
-    const addText = (
-      value: string,
-      size = 10,
-      style: 'normal' | 'bold' = 'normal',
-      color: [number, number, number] = [17, 24, 39],
-      lineGap = 4,
-      width = contentWidth,
-    ) => {
-      doc.setFont('helvetica', style)
-      doc.setFontSize(size)
-      doc.setTextColor(...color)
-      const lines = wrapText(doc, value, width)
-      ensureSpace(lines.length * (size + lineGap) + 2)
-      doc.text(lines, margin, y)
-      y += lines.length * (size + lineGap)
-    }
+    const selectedMilestones = milestones
+      .map((milestone) => {
+        const pickedBlocks = milestone.blocks.filter((block) => selected[block.id])
+        if (pickedBlocks.length === 0) return ''
+        const milestoneMin = pickedBlocks.reduce((sum, block) => sum + block.min, 0)
+        const milestoneMax = pickedBlocks.reduce((sum, block) => sum + block.max, 0)
+        const blockRows = pickedBlocks
+          .map(
+            (block) => `
+              <tr>
+                <td>${escapeHtml(block.title)}</td>
+                <td>${escapeHtml(categoryLabels[block.category])}</td>
+                <td>${escapeHtml(priorityLabels[block.priority])}</td>
+                <td>${escapeHtml(formatHours(block.min, block.max))}</td>
+              </tr>
+            `,
+          )
+          .join('')
 
-    const addSectionTitle = (value: string) => {
-      y += 10
-      ensureSpace(30)
-      doc.setFillColor(227, 6, 19)
-      doc.rect(margin, y - 6, 4, 22, 'F')
-      doc.setFont('helvetica', 'bold')
-      doc.setFontSize(14)
-      doc.setTextColor(17, 24, 39)
-      doc.text(value, margin + 12, y + 9)
-      y += 28
-    }
+        return `
+          <section class="pdf-card pdf-avoid-break">
+            <div class="pdf-milestone-head">
+              <div>
+                <h3>${escapeHtml(milestone.title)}</h3>
+                <p>${escapeHtml(milestone.killerFeature)}</p>
+              </div>
+              <strong>${escapeHtml(formatHours(milestoneMin, milestoneMax))}</strong>
+            </div>
+            <table>
+              <thead>
+                <tr>
+                  <th>Блок</th>
+                  <th>Тип</th>
+                  <th>Статус</th>
+                  <th>Оцінка</th>
+                </tr>
+              </thead>
+              <tbody>${blockRows}</tbody>
+            </table>
+          </section>
+        `
+      })
+      .join('')
 
-    doc.setFillColor(227, 6, 19)
-    doc.roundedRect(margin, y, 34, 34, 8, 8, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(17)
-    doc.text('G', margin + 12, y + 23)
-    doc.setTextColor(17, 24, 39)
-    doc.setFontSize(18)
-    doc.text('Grandar MVP — обраний обсяг', margin + 48, y + 15)
-    doc.setFont('helvetica', 'normal')
-    doc.setFontSize(9)
-    doc.setTextColor(102, 112, 133)
-    doc.text(`Згенеровано ${new Date().toLocaleDateString('uk-UA')}`, margin + 48, y + 31)
-    y += 62
+    const removedImpact =
+      removedWarnings.length === 0
+        ? '<p class="pdf-muted">Рекомендований обсяг MVP не змінено. Жоден рекомендований блок не прибрано.</p>'
+        : removedWarnings
+            .map(
+              (block) => `
+                <div class="pdf-impact">
+                  <strong>${escapeHtml(block.title)}</strong>
+                  <p>${escapeHtml(block.consequence ?? '')}</p>
+                </div>
+              `,
+            )
+            .join('')
 
-    doc.setFillColor(17, 24, 39)
-    doc.roundedRect(margin, y, contentWidth, 86, 12, 12, 'F')
-    doc.setTextColor(255, 255, 255)
-    doc.setFont('helvetica', 'bold')
-    doc.setFontSize(24)
-    doc.text(formatHours(totals.min, totals.max), margin + 22, y + 35)
-    doc.setFontSize(11)
-    doc.setTextColor(213, 219, 229)
-    doc.text('Обрана оцінка MVP', margin + 22, y + 58)
-    doc.setTextColor(255, 255, 255)
-    doc.setFontSize(18)
-    doc.text(formatMonthRange(totals.min, totals.max), margin + 300, y + 35)
-    doc.setTextColor(213, 219, 229)
-    doc.setFontSize(11)
-    doc.text('Календар з 2 сеньйор full-stack розробниками', margin + 300, y + 58)
-    y += 112
+    report.innerHTML = `
+      <style>
+        .pdf-report {
+          width: 794px;
+          box-sizing: border-box;
+          padding: 42px;
+          background: #ffffff;
+          color: #111827;
+          font-family: Arial, sans-serif;
+        }
+        .pdf-header {
+          display: flex;
+          align-items: center;
+          gap: 16px;
+          margin-bottom: 30px;
+        }
+        .pdf-logo {
+          display: grid;
+          width: 46px;
+          height: 46px;
+          place-items: center;
+          border-radius: 10px;
+          background: #e30613;
+          color: #fff;
+          font-size: 24px;
+          font-weight: 900;
+        }
+        .pdf-header h1 {
+          margin: 0;
+          font-size: 26px;
+          line-height: 1.1;
+          letter-spacing: 0;
+        }
+        .pdf-header p,
+        .pdf-muted {
+          margin: 5px 0 0;
+          color: #64748b;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+        .pdf-hero {
+          display: grid;
+          grid-template-columns: 1.1fr 0.9fr;
+          gap: 18px;
+          margin-bottom: 26px;
+          padding: 24px;
+          border-radius: 18px;
+          background: #111827;
+          color: #ffffff;
+        }
+        .pdf-hero strong {
+          display: block;
+          font-size: 32px;
+          line-height: 1.05;
+        }
+        .pdf-hero span,
+        .pdf-hero p {
+          color: #d7dde8;
+          font-size: 12px;
+          line-height: 1.5;
+        }
+        .pdf-summary-grid {
+          display: grid;
+          grid-template-columns: repeat(3, 1fr);
+          gap: 10px;
+          margin-bottom: 26px;
+        }
+        .pdf-stat,
+        .pdf-card {
+          border: 1px solid #e5e7eb;
+          border-radius: 14px;
+          background: #ffffff;
+        }
+        .pdf-stat {
+          padding: 14px;
+        }
+        .pdf-stat span {
+          display: block;
+          color: #64748b;
+          font-size: 11px;
+          font-weight: 700;
+          text-transform: uppercase;
+        }
+        .pdf-stat strong {
+          display: block;
+          margin-top: 7px;
+          font-size: 20px;
+        }
+        .pdf-section-title {
+          display: flex;
+          align-items: center;
+          gap: 10px;
+          margin: 22px 0 12px;
+          font-size: 18px;
+          line-height: 1.2;
+        }
+        .pdf-section-title::before {
+          display: block;
+          width: 5px;
+          height: 24px;
+          border-radius: 4px;
+          background: #e30613;
+          content: "";
+        }
+        .pdf-breakdown {
+          display: grid;
+          gap: 10px;
+        }
+        .pdf-breakdown-row {
+          display: grid;
+          grid-template-columns: 190px 1fr;
+          align-items: center;
+          gap: 14px;
+        }
+        .pdf-breakdown-row div:first-child {
+          display: flex;
+          justify-content: space-between;
+          gap: 10px;
+          font-size: 12px;
+        }
+        .pdf-breakdown-row span {
+          color: #475569;
+        }
+        .pdf-bar {
+          height: 8px;
+          overflow: hidden;
+          border-radius: 999px;
+          background: #eef2f7;
+        }
+        .pdf-bar i {
+          display: block;
+          height: 100%;
+          border-radius: inherit;
+          background: #e30613;
+        }
+        .pdf-card {
+          margin-bottom: 12px;
+          padding: 16px;
+        }
+        .pdf-avoid-break {
+          break-inside: avoid;
+        }
+        .pdf-milestone-head {
+          display: flex;
+          justify-content: space-between;
+          gap: 20px;
+          margin-bottom: 12px;
+        }
+        .pdf-milestone-head h3 {
+          margin: 0;
+          font-size: 16px;
+          line-height: 1.2;
+        }
+        .pdf-milestone-head p {
+          margin: 5px 0 0;
+          color: #64748b;
+          font-size: 11px;
+          line-height: 1.45;
+        }
+        .pdf-milestone-head strong {
+          white-space: nowrap;
+          color: #e30613;
+          font-size: 13px;
+        }
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 11px;
+        }
+        th {
+          color: #64748b;
+          font-size: 10px;
+          text-align: left;
+          text-transform: uppercase;
+        }
+        td,
+        th {
+          padding: 8px 7px;
+          border-bottom: 1px solid #eef2f7;
+          vertical-align: top;
+        }
+        td:last-child,
+        th:last-child {
+          text-align: right;
+          white-space: nowrap;
+        }
+        .pdf-impact {
+          margin-bottom: 10px;
+          padding: 12px;
+          border-radius: 12px;
+          background: #fff7ed;
+        }
+        .pdf-impact strong {
+          display: block;
+          color: #9a3412;
+          font-size: 12px;
+        }
+        .pdf-impact p {
+          margin: 5px 0 0;
+          color: #7c2d12;
+          font-size: 11px;
+          line-height: 1.45;
+        }
+      </style>
+      <div class="pdf-report">
+        <header class="pdf-header">
+          <div class="pdf-logo">G</div>
+          <div>
+            <h1>Grandar MVP — обраний обсяг</h1>
+            <p>Згенеровано ${escapeHtml(new Date().toLocaleDateString('uk-UA'))}</p>
+          </div>
+        </header>
 
-    addText(
-      'Цей PDF фіксує конфігурацію обсягу, яку обрали в керованому калькуляторі. Обовʼязкові блоки вважаються зафіксованою логікою MVP. Прибрані блоки показані разом із наслідками.',
-      10,
-      'normal',
-      [71, 84, 103],
-      4,
-    )
+        <section class="pdf-hero">
+          <div>
+            <strong>${escapeHtml(formatHours(totals.min, totals.max))}</strong>
+            <span>Обрана оцінка MVP</span>
+          </div>
+          <div>
+            <strong>${escapeHtml(formatMonthRange(totals.min, totals.max))}</strong>
+            <span>Календар з 2 сеньйор full-stack розробниками</span>
+          </div>
+        </section>
 
-    addSectionTitle('Розподіл за типом робіт')
-    ;(Object.keys(categoryLabels) as Category[]).forEach((category) => {
-      const item = totals.breakdown[category]
-      addText(`${categoryLabels[category]}: ${formatHours(item.min, item.max)}`, 10, 'bold')
-    })
+        <div class="pdf-summary-grid">
+          <div class="pdf-stat">
+            <span>Обрані блоки</span>
+            <strong>${totals.picked.length}/${allBlocks.length}</strong>
+          </div>
+          <div class="pdf-stat">
+            <span>Прибрані блоки</span>
+            <strong>${totals.removed.length}</strong>
+          </div>
+          <div class="pdf-stat">
+            <span>Ризики урізання</span>
+            <strong>${removedWarnings.length}</strong>
+          </div>
+        </div>
 
-    addSectionTitle('Обраний обсяг')
-    milestones.forEach((milestone) => {
-      const pickedBlocks = milestone.blocks.filter((block) => selected[block.id])
-      if (pickedBlocks.length === 0) return
-      const milestoneMin = pickedBlocks.reduce((sum, block) => sum + block.min, 0)
-      const milestoneMax = pickedBlocks.reduce((sum, block) => sum + block.max, 0)
-      ensureSpace(54)
-      addText(`${milestone.title} — ${formatHours(milestoneMin, milestoneMax)}`, 12, 'bold')
-      addText(milestone.killerFeature, 9, 'normal', [102, 112, 133])
-      pickedBlocks.forEach((block) => {
-        addText(
-          `• ${block.title}: ${formatHours(block.min, block.max)} | ${categoryLabels[block.category]} | ${priorityLabels[block.priority]}`,
-          9,
-          'normal',
-          [17, 24, 39],
+        <p class="pdf-muted">
+          Цей PDF фіксує конфігурацію обсягу, яку обрали в керованому калькуляторі.
+          Обовʼязкові блоки вважаються зафіксованою логікою MVP. Прибрані блоки показані разом із наслідками.
+        </p>
+
+        <h2 class="pdf-section-title">Розподіл за типом робіт</h2>
+        <section class="pdf-card pdf-breakdown">${categoryRows}</section>
+
+        <h2 class="pdf-section-title">Обраний обсяг</h2>
+        ${selectedMilestones}
+
+        <h2 class="pdf-section-title">Наслідки урізання</h2>
+        <section class="pdf-card">${removedImpact}</section>
+
+        <h2 class="pdf-section-title">Припущення</h2>
+        <section class="pdf-card">
+          <p class="pdf-muted">1 розробник повної зайнятості ≈ 160 год/місяць.</p>
+          <p class="pdf-muted">2 сеньйор full-stack розробники ≈ 320 год/місяць.</p>
+          <p class="pdf-muted">Календар може змінюватися через приймальне тестування, доступи до інтеграцій і зміни обсягу.</p>
+        </section>
+      </div>
+    `
+
+    return report
+  }
+
+  async function exportPdf() {
+    const report = createPdfReportElement()
+    document.body.appendChild(report)
+
+    try {
+      const canvas = await html2canvas(report, {
+        backgroundColor: '#ffffff',
+        scale: 2,
+        useCORS: true,
+        windowWidth: 794,
+      })
+
+      const pdf = new jsPDF({ unit: 'pt', format: 'a4', orientation: 'portrait' })
+      const pageWidth = pdf.internal.pageSize.getWidth()
+      const pageHeight = pdf.internal.pageSize.getHeight()
+      const pageHeightPx = Math.floor((pageHeight / pageWidth) * canvas.width)
+      let sourceY = 0
+      let pageIndex = 0
+
+      while (sourceY < canvas.height) {
+        const sliceHeight = Math.min(pageHeightPx, canvas.height - sourceY)
+        const pageCanvas = document.createElement('canvas')
+        pageCanvas.width = canvas.width
+        pageCanvas.height = sliceHeight
+
+        const context = pageCanvas.getContext('2d')
+        if (!context) break
+
+        context.drawImage(canvas, 0, sourceY, canvas.width, sliceHeight, 0, 0, canvas.width, sliceHeight)
+        if (pageIndex > 0) pdf.addPage()
+        pdf.addImage(
+          pageCanvas.toDataURL('image/png'),
+          'PNG',
+          0,
+          0,
+          pageWidth,
+          (sliceHeight / canvas.width) * pageWidth,
         )
-      })
-      y += 4
-    })
 
-    addSectionTitle('Наслідки урізання')
-    if (removedWarnings.length === 0) {
-      addText('Рекомендований обсяг MVP не змінено. Жоден рекомендований блок не прибрано.', 10)
-    } else {
-      removedWarnings.forEach((block) => {
-        addText(`${block.title}`, 10, 'bold')
-        addText(block.consequence ?? '', 9, 'normal', [102, 112, 133])
-      })
+        sourceY += sliceHeight
+        pageIndex += 1
+      }
+
+      pdf.save('grandar-mvp-obranij-scope.pdf')
+    } finally {
+      report.remove()
     }
-
-    addSectionTitle('Припущення')
-    addText('1 розробник повної зайнятості ≈ 160 год/місяць.', 10)
-    addText('2 сеньйор full-stack розробники ≈ 320 год/місяць.', 10)
-    addText('Календар може змінюватися через приймальне тестування, доступи до інтеграцій, цикли зворотного звʼязку і зміни обсягу.', 10)
-
-    doc.save('grandar-mvp-obranij-scope.pdf')
   }
 
   return (
